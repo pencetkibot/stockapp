@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <!-- Meta Viewport Penting agar Tampilan Otomatis Menyesuaikan Ukuran Layar HP -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <title>Upload File Excel</title>
     <style>
       * {
@@ -11,56 +14,72 @@
         margin: 0;
         padding: 0;
       }
+      :root {
+        --kb-offset: 0px;
+      }
+      html,
+      body {
+        height: 100%;
+      }
       body {
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
           Arial, sans-serif;
         background-color: #f4f4f9;
-        padding: 16px;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100dvh;
+        overflow: auto;
+        padding-bottom: calc(10px + var(--kb-offset));
+      }
+      .page {
+        width: 100%;
+        min-height: calc(100dvh - 20px);
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
       }
       .card {
         background: white;
-        padding: 24px;
+        padding: 16px;
         border-radius: 12px;
         width: 100%;
         max-width: 480px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
       }
       h2 {
-        font-size: 1.4rem;
-        margin-bottom: 20px;
+        font-size: 1.2rem;
+        margin-bottom: 14px;
         color: #333;
         text-align: center;
       }
       .form-group {
-        margin-bottom: 18px;
+        margin-bottom: 12px;
       }
       label {
         display: block;
-        margin-bottom: 6px;
+        margin-bottom: 5px;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         color: #444;
       }
       input[type="text"],
       input[type="file"] {
         width: 100%;
-        padding: 12px;
+        padding: 10px;
         border: 1px solid #ccc;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         background-color: #fff;
       }
       input[type="file"] {
-        padding: 8px;
+        padding: 7px;
       }
       small {
         color: #666;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         display: block;
         margin-top: 4px;
         line-height: 1.3;
@@ -69,13 +88,13 @@
         background: #28a745;
         color: white;
         border: none;
-        padding: 14px;
+        padding: 12px;
         border-radius: 8px;
         cursor: pointer;
         width: 100%;
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: bold;
-        margin-top: 10px;
+        margin-top: 6px;
         transition: background 0.2s;
       }
       button:active {
@@ -84,65 +103,112 @@
       .alert {
         background-color: #f8d7da;
         color: #721c24;
-        padding: 12px;
+        padding: 10px;
         border-radius: 8px;
-        margin-bottom: 18px;
-        font-size: 0.9rem;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
         line-height: 1.4;
       }
 
       /* Penyesuaian khusus layar sangat kecil */
       @media (max-width: 360px) {
         .card {
-          padding: 16px;
+          padding: 12px;
         }
         h2 {
-          font-size: 1.2rem;
+          font-size: 1.05rem;
+        }
+      }
+
+      @media (max-height: 620px) {
+        .page {
+          align-items: flex-start;
+        }
+        .card {
+          margin-top: 2px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="card">
-      <h2>Upload File Excel</h2>
+    <div class="page">
+      <div class="card">
+        <h2>Upload File Excel</h2>
 
-      {% if error %}
-      <div class="alert">{{ error }}</div>
-      {% endif %}
+        {% if error %}
+        <div class="alert">{{ error }}</div>
+        {% endif %}
 
-      <form action="/" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label>1. Pilih File Excel (.xlsx):</label>
-          <input type="file" name="file" accept=".xlsx, .xls" />
-        </div>
+        <form action="/" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label>1. Pilih File Excel (.xlsx):</label>
+            <input type="file" name="file" accept=".xlsx, .xls" />
+          </div>
 
-        <div class="form-group">
-          <label>2. Kolom Target (Diupdate):</label>
-          <input
-            type="text"
-            name="target_column"
-            placeholder="Contoh: Cek Fisik"
-            value="Cek Fisik"
-            required
-          />
-        </div>
+          <div class="form-group">
+            <label>2. Kolom Target (Diupdate):</label>
+            <input
+              type="text"
+              name="target_column"
+              placeholder="Contoh: Cek Fisik"
+              value="Cek Fisik"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label>3. Kolom Tampilan (Opsional):</label>
-          <input
-            type="text"
-            name="display_columns"
-            placeholder="Contoh: Material"
-            value="Material, Material Description, Bin Locatn, ValType"
-          />
-          <small
-            >*Pisahkan dengan koma. Kosongkan jika ingin menampilkan semua
-            kolom.</small
-          >
-        </div>
+          <div class="form-group">
+            <label>3. Kolom Tampilan (Opsional):</label>
+            <input
+              type="text"
+              name="display_columns"
+              placeholder="Contoh: Material"
+              value="Material, Material Description, Bin Locatn, ValType"
+            />
+            <small
+              >*Pisahkan dengan koma. Kosongkan jika ingin menampilkan semua
+              kolom.</small
+            >
+          </div>
 
-        <button type="submit">Mulai Edit Data</button>
-      </form>
+          <button type="submit">Mulai Edit Data</button>
+        </form>
+      </div>
     </div>
+
+    <script>
+      (function () {
+        const root = document.documentElement;
+        const updateKeyboardOffset = () => {
+          const vv = window.visualViewport;
+          if (!vv) return;
+          const offset = Math.max(
+            0,
+            window.innerHeight - vv.height - vv.offsetTop,
+          );
+          root.style.setProperty("--kb-offset", offset + "px");
+        };
+
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener(
+            "resize",
+            updateKeyboardOffset,
+          );
+          window.visualViewport.addEventListener(
+            "scroll",
+            updateKeyboardOffset,
+          );
+        }
+        window.addEventListener("focusin", () => {
+          updateKeyboardOffset();
+          setTimeout(() => {
+            const focused = document.activeElement;
+            if (focused && focused.scrollIntoView) {
+              focused.scrollIntoView({ block: "center", behavior: "smooth" });
+            }
+          }, 80);
+        });
+        updateKeyboardOffset();
+      })();
+    </script>
   </body>
 </html>
