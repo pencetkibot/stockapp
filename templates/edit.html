@@ -200,6 +200,17 @@
             autocomplete="off"
           />
         </div>
+        <div class="active-field">
+          <label><strong>Edit Kolom [ {{ second_target_column }} ] :</strong></label>
+          <input
+            type="text"
+            name="second_target_value"
+            value="{{ row[second_target_column] }}"
+            inputmode="text"
+            required
+            autocomplete="off"
+          />
+        </div>
         <button type="submit">Simpan & Lanjut ➔</button>
       </form>
     </div>
@@ -207,7 +218,7 @@
     <script>
       (function () {
         const root = document.documentElement;
-        const fieldInput = document.querySelector('input[name="target_value"]');
+        const fieldInputs = document.querySelectorAll(".active-field input");
 
         const updateKeyboardOffset = () => {
           const vv = window.visualViewport;
@@ -220,7 +231,8 @@
         };
 
         const keepInputVisible = () => {
-          if (!fieldInput) return;
+          const fieldInput = document.activeElement;
+          if (!fieldInput || !fieldInput.matches(".active-field input")) return;
           setTimeout(() => {
             fieldInput.scrollIntoView({ block: "center", behavior: "smooth" });
           }, 80);
@@ -237,12 +249,12 @@
           );
         }
 
-        if (fieldInput) {
+        fieldInputs.forEach((fieldInput) => {
           fieldInput.addEventListener("focus", () => {
             updateKeyboardOffset();
             keepInputVisible();
           });
-        }
+        });
 
         updateKeyboardOffset();
       })();

@@ -1,14 +1,14 @@
 # StockApp - Aplikasi Stock Taking (Flask)
 
 Aplikasi web sederhana untuk membantu proses stock taking dari file Excel.
-Alur utama: upload file, pilih kolom yang diedit, isi nilai per baris, lalu unduh hasil akhir dalam format Excel.
+Alur utama: upload file, pilih dua kolom yang diedit, isi nilainya per baris, lalu unduh hasil akhir dalam format Excel.
 
 ## Fitur Saat Ini
 
 - Upload file Excel dengan format `.xlsx` atau `.xls`.
-- Validasi kolom target (harus ada di file Excel).
+- Validasi dua kolom target (harus ada di file Excel dan harus berbeda).
 - Dukungan kolom tampilan (display columns) untuk informasi referensi selama input.
-- Jika kolom tampilan dikosongkan, aplikasi otomatis menampilkan semua kolom selain kolom target.
+- Jika kolom tampilan dikosongkan, aplikasi otomatis menampilkan semua kolom selain kedua kolom target.
 - Halaman edit mobile-friendly dengan progress bar.
 - Pengisian data dilakukan per baris dan menyimpan perubahan secara bertahap.
 - Baris kosong otomatis dilewati saat proses edit.
@@ -19,10 +19,10 @@ Alur utama: upload file, pilih kolom yang diedit, isi nilai per baris, lalu undu
 
 1. Buka halaman upload.
 2. Pilih file Excel.
-3. Isi nama kolom target yang ingin diupdate.
+3. Isi nama kedua kolom target yang ingin diupdate.
 4. (Opsional) Isi daftar kolom tampilan, dipisahkan koma.
 5. Klik **Mulai Edit Data**.
-6. Isi nilai kolom target untuk setiap baris, lalu klik **Simpan & Lanjut**.
+6. Isi nilai kedua kolom target untuk setiap baris, lalu klik **Simpan & Lanjut**.
 7. Saat selesai, file hasil `.xlsx` otomatis terunduh.
 
 ## Menjalankan Aplikasi

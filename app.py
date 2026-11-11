@@ -66,13 +66,17 @@ def upload():
 
         file = request.files.get('file')
         target_column = request.form.get('target_column', '').strip()
+        second_target_column = request.form.get('second_target_column', '').strip()
         display_columns_raw = request.form.get('display_columns', '').strip()
         
         if not file or file.filename == '':
             return render_template('upload.html', error="Silakan pilih file Excel terlebih dahulu!")
             
-        if not target_column:
-            return render_template('upload.html', error="Silakan isi nama kolom target!")
+        if not target_column or not second_target_column:
+            return render_template('upload.html', error="Silakan isi kedua nama kolom target!")
+
+        if target_column == second_target_column:
+            return render_template('upload.html', error="Kedua kolom target harus berbeda!")
 
         if file and file.filename.endswith(('.xlsx', '.xls', '.XLSX', '.XLS')):
             upload_id = uuid4().hex
@@ -85,10 +89,14 @@ def upload():
             df = pd.read_excel(filepath)
             available_cols = list(df.columns)
             
-            # Validasi 1: Kolom target harus ada
-            if target_column not in available_cols:
+            # Validasi kolom target harus ada
+            invalid_target_columns = [
+                column for column in (target_column, second_target_column)
+                if column not in available_cols
+            ]
+            if invalid_target_columns:
                 return render_template('upload.html', 
-                                       error=f"Kolom '{target_column}' tidak ditemukan! Kolom tersedia: [{', '.join(available_cols)}]")
+                                       error=f"Kolom target tidak ditemukan: [{', '.join(invalid_target_columns)}]. Kolom tersedia: [{', '.join(available_cols)}]")
 
             # Olah kolom tampilan (display columns)
             display_columns = []
@@ -102,8 +110,9 @@ def upload():
                     return render_template('upload.html', 
                                            error=f"Kolom tampilan tidak valid: [{', '.join(invalid_cols)}]. Kolom tersedia: [{', '.join(available_cols)}]")
             else:
-                # Jika kosong, tampilkan semua kolom selain kolom target
-                display_columns = [col for col in available_cols if col != target_column]
+                # Jika kosong, tampilkan semua kolom selain kedua kolom target
+                target_columns = {target_column, second_target_column}
+                display_columns = [col for col in available_cols if col not in target_columns]
 
             # Simpan data ke JSON sementara
             json_filename = f"{file_root}_{upload_id}.json"
@@ -118,6 +127,7 @@ def upload():
             session['upload_path'] = filepath
             session['json_path'] = json_path
             session['target_column'] = target_column
+            session['second_target_column'] = second_target_column
             session['display_columns'] = display_columns
             session['current_index'] = next_non_empty_index(data, 0)
             session['columns'] = available_cols
@@ -139,6 +149,7 @@ def edit():
     
     current_index = session['current_index']
     target_column = session['target_column']
+    second_target_column = session['second_target_column']
     display_columns = session['display_columns']
     total_rows = len(data)
 
@@ -150,9 +161,11 @@ def edit():
 
     if request.method == 'POST':
         new_val = request.form.get('target_value')
+        second_new_val = request.form.get('second_target_value')
         
-        # Update nilai kolom target
+        # Update nilai kedua kolom target
         data[current_index][target_column] = new_val
+        data[current_index][second_target_column] = second_new_val
         save_json(json_path, data)
 
         # Lanjut ke baris berikutnya
@@ -170,6 +183,7 @@ def edit():
                            index=current_index + 1, 
                            total=total_rows, 
                            target_column=target_column,
+                           second_target_column=second_target_column,
                            display_columns=display_columns)
 
 
